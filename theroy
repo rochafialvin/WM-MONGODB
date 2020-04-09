@@ -20,6 +20,13 @@ POST
                   })
 
 
+findOne
+   - Hanya akan mencari satu data, jika sudah ditemukan satu data yang sesuai filter, tidak akan mencari data lagi
+   - Response dalam bentuk o b j e c t   
+
+find -> toArray()
+   - Akan mencari lebih dari satu data
+   - Response dalam bentuk a r r a y
       
    
    

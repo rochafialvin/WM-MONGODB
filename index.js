@@ -25,7 +25,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
    app.get('/', (req, res) => {
       res.send(
-         '<h1>Welcom to my Home</h1>'
+         '<h1>Welcome to my Home</h1>'
       )
    })
 
@@ -44,6 +44,33 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
    })
 
+   app.get('/findone', (req, res) => {
+
+      // Data yang dikirim saat proses GET akan dianggap sebagai string
+      let _age = parseInt(req.query.age)
+
+      // Mencari satu data berdasarkan umurnya
+      db.collection('users').findOne({age : _age})
+         .then((resp) => {
+            res.send(resp)
+         })
+         
+   })
+
+   // Get data berdasarkan nama
+   app.get('/find', (req, res) => {
+
+      let _age = parseInt(req.query.age)
+      
+      // Mencari lebih dari satu data berdasarkan umurnya
+      db.collection('users').find({age : _age}).toArray()
+         .then((resp) => {
+            res.send(resp)
+         })
+
+   })
+
+            
 
 })
 
