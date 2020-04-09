@@ -29,6 +29,21 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       )
    })
 
+   app.post('/users', (req, res) => {
+      // Mengambil property name dan age dari req.body
+      const {name, age} = req.body
+
+      db.collection('users').insertOne({name, age})
+         .then((resp) => {
+            res.send({
+               id : resp.insertedId,
+               user: resp.ops[0]
+            })
+         })
+
+
+   })
+
 
 })
 
