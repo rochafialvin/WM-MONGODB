@@ -1,0 +1,25 @@
+GET
+   - Mengirim data sebagai Parameter
+   - Pada API, data tersebut akan berada di 'req.query'
+   - Contoh :
+                  app.get('/users', (req, res) => {
+                     res.send(
+                        req.query
+                     )
+                  })
+
+POST
+   - Mengirim data sebagai Body
+   - Data di kirim dalam bentuk JSON, maka kita harus menggunakan app.use(express.json())
+   - Pada API, data tersebut akan berada di 'req.body'
+   - Contoh :
+                  app.post('/users', (req, res) => {
+                     res.send(
+                        req.body
+                     )
+                  })
+
+
+      
+   
+   
