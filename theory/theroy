@@ -28,5 +28,13 @@ find -> toArray()
    - Akan mencari lebih dari satu data
    - Response dalam bentuk a r r a y
       
+
+.then()
+   - Ini hanya akan running jika kode asynchronous berhasil di jalankan
+   - axios.get() , jika berhasil melakukan proses get, terlepas data yang kita cari ada atau tidak , maka akan masuk ke dalam .then
+   - db.collection() , jika berhasil melakukan operasi terhadap database maka akan dianggap berhasil dan masuk ke dalam .then
+
+.catch()
+   - Ini yang akan menghandle jika proses kode asynchronous gagal dijalankan
    
    

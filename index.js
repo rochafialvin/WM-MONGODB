@@ -3,8 +3,6 @@ const express = require('express')
 const app = express()
 const port = 2020
 
-let input = "28"
-let inputInt = parseInt(input)
 
 // Agar dapat menerima object saat post (req.body)
 app.use(express.json())
@@ -45,6 +43,9 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
                id : resp.insertedId,
                user: resp.ops[0]
             })
+         }).catch((err) => {
+
+            res.send(err)
          })
 
 
@@ -63,6 +64,8 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
             res.send(resp)
 
+         }).catch((err) => {
+            res.send(err)
          })
          
    })
@@ -77,6 +80,8 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       db.collection('users').find({age : usia}).toArray()
          .then((resp) => {
             res.send(resp)
+         }).catch((err) => {
+            res.send(err)
          })
 
    })
@@ -87,6 +92,10 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       db.collection('users').find({}).toArray()
          .then((resp) => {
             res.send( resp )
+
+         }).catch((err) => {
+            res.send(err.name)
+
          })
 
    })
@@ -103,6 +112,8 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
             res.send({
                banyak_data : resp.modifiedCount
             })
+         }).catch((err) => {
+            res.send(err)
          })
    })
 
@@ -117,6 +128,8 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       db.collection('users').deleteOne({ name })
          .then((resp) => {
             res.send( resp )
+         }).catch((err) => {
+            res.send(err)
          })
    })
 
@@ -124,3 +137,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
 // Running API
 app.listen(port, () => { console.log('API running at port ' + port) })
+
+{
+   error_message : "Inputan Anda salah"
+}
