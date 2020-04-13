@@ -50,7 +50,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
    })
 
-   // GET ONE USER
+   // READ ONE USER
    app.get('/findone', (req, res) => {
       // req.query = {usia :  "28", nama: "Andri"}
 
@@ -68,7 +68,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
    })
 
 
-   // GET MANY USERS
+   // READ MANY USERS
    app.get('/find', (req, res) => {
 
       let usia = parseInt(req.query.usia)
@@ -81,7 +81,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
    })
 
-   // GET ALL USERS
+   // READ ALL USERS
    app.get('/alluser', (req, res) => {
 
       db.collection('users').find({}).toArray()
@@ -91,17 +91,34 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
    })
 
+   // UPDATE BY NAME
+   app.patch('/user/:name', (req, res) => {
+      let name = req.params.name // Demian
+      let newName = req.body.newname // Deny
+
+      name = name[0].toUpperCase() + name.slice(1)
+
+      db.collection('users').updateOne({ name }, { $set : {name: newName} })
+         .then((resp) => {
+            res.send({
+               banyak_data : resp.modifiedCount
+            })
+         })
+   })
+
    // DELETE BY NAME
    app.delete('/user/:name', (req, res) => {
+      // req.params karena kita menambahkan variable pada path / link
       let name = req.params.name
+
+      // Agar karakter pertama pada nama akan menjadi huruf besar (capital)
+      name = name[0].toUpperCase() + name.slice(1)
 
       db.collection('users').deleteOne({ name })
          .then((resp) => {
             res.send( resp )
          })
    })
-
-            
 
 })
 
