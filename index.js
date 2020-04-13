@@ -35,38 +35,59 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
    // CREATE ONE USER
    app.post('/users', (req, res) => {
       // Mengambil property name dan age dari req.body
-      const {name, age} = req.body
+      let {name, age} = req.body
+      // name : 32
+      // age : "Susi"
 
-      db.collection('users').insertOne({name, age})
-         .then((resp) => {
+      name = parseInt(name) // 32
+      age = parseInt(age) // NaN
+
+      // ideal , name = NaN , age = number
+      
+      if(isNaN(name) && !isNaN(age)){ // Jika user input dengan benar
+         db.collection('users').insertOne({name, age})
+         .then((resp) => { // Jika berhasil melakukan insertOne
             res.send({
                id : resp.insertedId,
                user: resp.ops[0]
             })
-         }).catch((err) => {
+         }).catch((err) => { // Jika gagal melakukan insertOne , masalah server
 
             res.send(err)
          })
-
-
+      } else { // Jika terjadi kesalahan input user
+         res.send({
+            error_message : "Inputan Anda salah"
+         })
+      }
+      
    })
 
    // READ ONE USER
    app.get('/findone', (req, res) => {
-      // req.query = {usia :  "28", nama: "Andri"}
+      // req.query = {age :  "28", nama: "Andri"}
 
       // Data yang dikirim saat proses GET akan dianggap sebagai string
-      let usia = parseInt(req.query.usia)
+      let age = parseInt(req.query.age)
 
-      // Mencari satu data berdasarkan umurnya
-      db.collection('users').findOne({age: usia})
-         .then((resp) => {
+      if(!isNaN(age)){ // Jika user input dengan benar
+
+         // Mencari satu data berdasarkan umurnya
+         db.collection('users').findOne({age})
+         .then((resp) => { // Jika berhasil menjalankan findOne
 
             res.send(resp)
 
-         }).catch((err) => {
+         }).catch((err) => { // Jika terjadi kegagalan proses findOne, masalah server
             res.send(err)
          })
+      } else { // Jika terjadi kesalahan input user
+         res.send({
+            error_message : "Inputan Anda salah"
+         })
+      }
+
+
          
    })
 
@@ -74,16 +95,28 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
    // READ MANY USERS
    app.get('/find', (req, res) => {
 
-      let usia = parseInt(req.query.usia)
-      
-      // Mencari lebih dari satu data berdasarkan umurnya
-      db.collection('users').find({age : usia}).toArray()
-         .then((resp) => {
+      let usia=  parseInt(req.query.usia)
+
+      if(!isNaN(usia)) { // Jika user input data dengan benar
+         // Mencari lebih dari satu data berdasarkan umurnya
+         db.collection('users').find({age : usia}).toArray()
+         .then((resp) => { // Jika berhasil melakukan find
             res.send(resp)
-         }).catch((err) => {
+
+         }).catch((err) => { // Jika terjadi masalah dengan server, akan mengirim object error
+            
             res.send(err)
+
          })
 
+      } else { // Jika terjadi kesalahan input oleh user, makan akan mengirimkan object info
+         
+         res.send({
+            error_message : "Inputan Anda salah"
+         })
+      }
+      
+      
    })
 
    // READ ALL USERS
@@ -93,7 +126,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
          .then((resp) => {
             res.send( resp )
 
-         }).catch((err) => {
+         }).catch((err) => { // Jika gagal menjalankan find
             res.send(err.name)
 
          })
@@ -105,16 +138,28 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       let name = req.params.name // Demian
       let newName = req.body.newname // Deny
 
-      name = name[0].toUpperCase() + name.slice(1)
+      name = parseInt(name)
+      newName = parseInt(newName)
 
-      db.collection('users').updateOne({ name }, { $set : {name: newName} })
-         .then((resp) => {
-            res.send({
-               banyak_data : resp.modifiedCount
+      if(isNaN(name) && isNaN(newName)){ // Jika user input data dengan benar
+
+         name = name[0].toUpperCase() + name.slice(1)
+
+         db.collection('users').updateOne({ name }, { $set : {name: newName} })
+            .then((resp) => { // Jika berhasil menjalankan updateOne
+               res.send({
+                  banyak_data : resp.modifiedCount
+               })
+            }).catch((err) => { // Jika gagal menjalankan updateOne
+               res.send(err)
             })
-         }).catch((err) => {
-            res.send(err)
+      } else { // Jika terjadi kesalahan input user
+         res.send({
+            error_message : "Inputan Anda salah"
          })
+      }
+
+      
    })
 
    // DELETE BY NAME
@@ -122,15 +167,27 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       // req.params karena kita menambahkan variable pada path / link
       let name = req.params.name
 
-      // Agar karakter pertama pada nama akan menjadi huruf besar (capital)
-      name = name[0].toUpperCase() + name.slice(1)
+      name = parseInt(name)
 
-      db.collection('users').deleteOne({ name })
-         .then((resp) => {
-            res.send( resp )
-         }).catch((err) => {
-            res.send(err)
+      if(isNaN(name)){ // Jika input user benar
+         // Agar karakter pertama pada nama akan menjadi huruf besar (capital)
+         name = name[0].toUpperCase() + name.slice(1)
+
+         db.collection('users').deleteOne({ name })
+            .then((resp) => { // Jika berhasil menjalankan deleteOne
+               res.send( resp )
+
+            }).catch((err) => { // Jika gagal menjalankan deleteOne
+               res.send(err)
+
+            })
+
+      } else { // Jika terjadi kesalahan input user
+         res.send({
+            error_message : "Inputan Anda salah"
          })
+      }
+
    })
 
 })
@@ -138,6 +195,6 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 // Running API
 app.listen(port, () => { console.log('API running at port ' + port) })
 
-{
-   error_message : "Inputan Anda salah"
-}
+// {
+//    error_message : "Inputan Anda salah"
+// }
