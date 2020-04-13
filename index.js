@@ -3,6 +3,9 @@ const express = require('express')
 const app = express()
 const port = 2020
 
+let input = "28"
+let inputInt = parseInt(input)
+
 // Agar dapat menerima object saat post (req.body)
 app.use(express.json())
 
@@ -20,6 +23,8 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       return console.log('Gagal terkoneksi dengan MongoDB')
    }
 
+   console.log('Berhasil terkoneksi dengan MongoDB')
+
    // Menentukan database mana yang akan digunakan
    const db = client.db(database)
 
@@ -29,6 +34,7 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
       )
    })
 
+   // CREATE ONE USER
    app.post('/users', (req, res) => {
       // Mengambil property name dan age dari req.body
       const {name, age} = req.body
@@ -44,30 +50,55 @@ MongoClient.connect(URL, {useNewUrlParser : true, useUnifiedTopology: true}, (er
 
    })
 
+   // GET ONE USER
    app.get('/findone', (req, res) => {
+      // req.query = {usia :  "28", nama: "Andri"}
 
       // Data yang dikirim saat proses GET akan dianggap sebagai string
-      let _age = parseInt(req.query.age)
+      let usia = parseInt(req.query.usia)
 
       // Mencari satu data berdasarkan umurnya
-      db.collection('users').findOne({age : _age})
+      db.collection('users').findOne({age: usia})
          .then((resp) => {
+
             res.send(resp)
+
          })
          
    })
 
-   // Get data berdasarkan nama
+
+   // GET MANY USERS
    app.get('/find', (req, res) => {
 
-      let _age = parseInt(req.query.age)
+      let usia = parseInt(req.query.usia)
       
       // Mencari lebih dari satu data berdasarkan umurnya
-      db.collection('users').find({age : _age}).toArray()
+      db.collection('users').find({age : usia}).toArray()
          .then((resp) => {
             res.send(resp)
          })
 
+   })
+
+   // GET ALL USERS
+   app.get('/alluser', (req, res) => {
+
+      db.collection('users').find({}).toArray()
+         .then((resp) => {
+            res.send( resp )
+         })
+
+   })
+
+   // DELETE BY NAME
+   app.delete('/user/:name', (req, res) => {
+      let name = req.params.name
+
+      db.collection('users').deleteOne({ name })
+         .then((resp) => {
+            res.send( resp )
+         })
    })
 
             
